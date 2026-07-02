@@ -329,13 +329,17 @@ models_info['Модель 1 (базовая)'] = (m1, df_m1, ['total_area', 'flo
 m2, df_m2 = build_ols_model(['total_area', 'rooms', 'total_floors', 'first_floor'])
 models_info['Модель 2 (расширенная)'] = (m2, df_m2, ['total_area', 'rooms', 'total_floors', 'first_floor'], False)
 
-# Модель 3: + качественные характеристики жилья (ремонт, балкон, материал)
-# Добавляем потребительские качества объекта — ремонт и балкон.
+# Модель 3: + качественные характеристики жилья (ремонт, балкон, материал, этаж)
+# Добавляем потребительские качества объекта — ремонт, балкон, а также
+# last_floor и is_panel, чтобы явно проверить гипотезы Г3 (последний этаж)
+# и Г6 (кирпич vs панель) регрессионно, а не только описательно.
 m3, df_m3 = build_ols_model(['total_area', 'rooms', 'total_floors',
-                              'first_floor', 'is_brick', 'repair', 'has_balcony'])
-models_info['Модель 3 (+ ремонт и балкон)'] = (
+                              'first_floor', 'last_floor', 'is_brick', 'is_panel',
+                              'repair', 'has_balcony'])
+models_info['Модель 3 (+ ремонт, балкон, этаж, материал)'] = (
     m3, df_m3,
-    ['total_area', 'rooms', 'total_floors', 'first_floor', 'is_brick', 'repair', 'has_balcony'],
+    ['total_area', 'rooms', 'total_floors', 'first_floor', 'last_floor',
+     'is_brick', 'is_panel', 'repair', 'has_balcony'],
     False)
 
 # Модель 4: Логарифмическая простая — log(цена) от log(площади) и комнат
@@ -345,14 +349,14 @@ m4, df_m4 = build_ols_model(['log_total_area', 'rooms'], log_y=True)
 models_info['Модель 4 (логарифмическая)'] = (m4, df_m4, ['log_total_area', 'rooms'], True)
 
 # Модель 5: Логарифмическая расширенная — log(цена) от log(площади),
-# комнат, этажности, первого этажа, ремонта и балкона.
+# комнат, этажности, первого/последнего этажа, ремонта и балкона.
 # Это наиболее полная спецификация — сочетает нелинейность (логарифм)
 # с набором значимых предикторов.
 m5, df_m5 = build_ols_model(['log_total_area', 'rooms', 'total_floors',
-                              'first_floor', 'repair', 'has_balcony'], log_y=True)
+                              'first_floor', 'last_floor', 'repair', 'has_balcony'], log_y=True)
 models_info['Модель 5 (лог. расширенная + ремонт)'] = (
     m5, df_m5,
-    ['log_total_area', 'rooms', 'total_floors', 'first_floor', 'repair', 'has_balcony'],
+    ['log_total_area', 'rooms', 'total_floors', 'first_floor', 'last_floor', 'repair', 'has_balcony'],
     True)
 
 print(f"\nПостроено моделей: {len(models_info)}\n")
